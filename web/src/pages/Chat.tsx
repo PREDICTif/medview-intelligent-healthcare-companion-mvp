@@ -79,6 +79,8 @@ function Chat() {
     setCodeInterpreter,
     webBrowser,
     setWebBrowser,
+    weather,              // ADD THIS
+    setWeather,
     selectedModel,
     setSelectedModel,
     availableModels,
@@ -212,6 +214,7 @@ function Chat() {
           if (toolSelection.codeInterpreter)
             finalToolsToUse.push('codeInterpreter');
           if (toolSelection.webBrowser) finalToolsToUse.push('webBrowser');
+          if (toolSelection.weather) finalToolsToUse.push('weather');
         }
       } catch (error) {
         console.error('Failed to auto-select tools:', error);
@@ -866,6 +869,8 @@ function Chat() {
         onCodeInterpreterChange={setCodeInterpreter}
         webBrowser={webBrowser}
         onWebBrowserChange={setWebBrowser}
+        weather={weather}
+        onWeatherChange={setWeather}
       />
     </div>
   );
