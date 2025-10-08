@@ -159,6 +159,7 @@ const useChatState = (chatId: string) => {
   const hasAwsDocumentation = currentTools.includes('awsDocumentation');
   const hasCodeInterpreter = currentTools.includes('codeInterpreter');
   const hasWebBrowser = currentTools.includes('webBrowser');
+  const hasWeather = currentTools.includes('weather');
 
   const toggleTool = useCallback(
     (toolName: string) => {
@@ -261,6 +262,19 @@ const useChatState = (chatId: string) => {
         setToolsToUseImpl(
           chatId,
           currentTools.filter((tool) => tool !== 'webBrowser')
+        );
+      }
+    },
+    weather: hasWeather,
+    setWeather: (enabled: boolean) => {
+      const currentTools = state.toolsToUse || [];
+      const hasThisTool = currentTools.includes('weather');
+      if (enabled && !hasThisTool) {
+        setToolsToUseImpl(chatId, [...currentTools, 'weather']);
+      } else if (!enabled && hasThisTool) {
+        setToolsToUseImpl(
+          chatId,
+          currentTools.filter((tool) => tool !== 'weather')
         );
       }
     },
