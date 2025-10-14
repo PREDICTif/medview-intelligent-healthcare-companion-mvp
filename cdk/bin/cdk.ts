@@ -2,6 +2,7 @@
 import * as cdk from 'aws-cdk-lib';
 import { StrandsChatStack } from '../lib/strands-chat-stack';
 import { WafStack } from '../lib/waf-stack';
+import { MihcStack } from '../lib/mihc-stack';
 import { Parameter, ParameterSchema } from '../parameter.types';
 import { parameter } from '../parameter';
 
@@ -13,6 +14,13 @@ const wafStack = new WafStack(app, 'StrandsChatWaf', {
   env: {
     account: process.env.CDK_DEFAULT_ACCOUNT,
     region: 'us-east-1',
+  },
+});
+
+const mihcStack = new MihcStack(app, 'mihc-stack', {
+  env: {
+    account: process.env.CDK_DEFAULT_ACCOUNT,
+    region: validatedParameter.appRegion,
   },
 });
 

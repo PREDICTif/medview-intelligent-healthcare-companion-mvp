@@ -6,7 +6,7 @@ import { Parameter } from './parameter.types';
  */
 export const parameter: Parameter = {
   // The AWS region where the application will be deployed
-  appRegion: 'ap-northeast-1',
+  appRegion: 'us-east-1',
 
   // Models available for users to select in the UI
   // Each model can specify a display name and region
@@ -42,14 +42,14 @@ export const parameter: Parameter = {
 
   // AWS region for Nova Canvas model used for image generation
   // Nova Canvas access must be enabled in the specified region
-  novaCanvasRegion: 'ap-northeast-1',
+  novaCanvasRegion: 'us-east-1',
 
   // Model configuration for chat title generation
   // Specify the model ID and region
   // A lightweight model is recommended
   createTitleModel: {
     id: 'anthropic.claude-3-haiku-20240307-v1:0',
-    region: 'ap-northeast-1',
+    region: 'us-east-1',
   },
 
   // AgentCore configuration

@@ -1,0 +1,41 @@
+default_agent: diabetes_scraper_agent
+agents:
+  diabetes_scraper_agent:
+    name: diabetes_scraper_agent
+    entrypoint: /Users/brianliu/projects/medview/20251014/medview-intelligent-healthcare-companion-mvp/kb/diabetes_scraper_agentcore_runtime.py
+    platform: linux/arm64
+    container_runtime: none
+    source_path: null
+    aws:
+      execution_role: arn:aws:iam::584360833890:role/AmazonBedrockAgentCoreSDKRuntime-us-east-1-291bdc1eb7
+      execution_role_auto_create: false
+      account: '584360833890'
+      region: us-east-1
+      ecr_repository: 584360833890.dkr.ecr.us-east-1.amazonaws.com/bedrock-agentcore-diabetes_scraper_agent
+      ecr_auto_create: false
+      network_configuration:
+        network_mode: PUBLIC
+        network_mode_config: null
+      protocol_configuration:
+        server_protocol: HTTP
+      observability:
+        enabled: true
+    bedrock_agentcore:
+      agent_id: diabetes_scraper_agent-60Lko24gbm
+      agent_arn: arn:aws:bedrock-agentcore:us-east-1:584360833890:runtime/diabetes_scraper_agent-60Lko24gbm
+      agent_session_id: null
+    codebuild:
+      project_name: bedrock-agentcore-diabetes_scraper_agent-builder
+      execution_role: arn:aws:iam::584360833890:role/AmazonBedrockAgentCoreSDKCodeBuild-us-east-1-291bdc1eb7
+      source_bucket: bedrock-agentcore-codebuild-sources-584360833890-us-east-1
+    memory:
+      mode: STM_ONLY
+      memory_id: diabetes_scraper_agent_mem-46fw76HQKx
+      memory_arn: arn:aws:bedrock-agentcore:us-east-1:584360833890:memory/diabetes_scraper_agent_mem-46fw76HQKx
+      memory_name: diabetes_scraper_agent_mem
+      event_expiry_days: 30
+      first_invoke_memory_check_done: false
+      was_created_by_toolkit: true
+    authorizer_configuration: null
+    request_header_configuration: null
+    oauth_configuration: null
