@@ -17,7 +17,8 @@ const wafStack = new WafStack(app, 'StrandsChatWaf', {
   },
 });
 
-const mihcStack = new MihcStack(app, 'mihc-stack', {
+const mihcStack = new MihcStack(app, 'MihcStack', {
+  crossRegionReferences: true,
   env: {
     account: process.env.CDK_DEFAULT_ACCOUNT,
     region: validatedParameter.appRegion,
