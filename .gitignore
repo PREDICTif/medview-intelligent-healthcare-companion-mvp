@@ -2,5 +2,6 @@
 .vscode
 .mcp.json
 .claude
+clientDocs/
 .env
 venv
