@@ -118,6 +118,27 @@ export class MihcStack extends cdk.Stack {
             ],
             resources: ["*"],
           }),
+          new iam.PolicyStatement({
+            sid: "Allow CloudWatch Logs Service",
+            effect: iam.Effect.ALLOW,
+            principals: [
+              new iam.ServicePrincipal(`logs.${cdk.Stack.of(this).region}.amazonaws.com`)
+            ],
+            actions: [
+              "kms:Encrypt",
+              "kms:Decrypt",
+              "kms:ReEncrypt*",
+              "kms:GenerateDataKey*",
+              "kms:CreateGrant",
+              "kms:DescribeKey",
+            ],
+            resources: ["*"],
+            conditions: {
+              ArnLike: {
+                "kms:EncryptionContext:aws:logs:arn": `arn:aws:logs:${cdk.Stack.of(this).region}:${account}:log-group:/aws/rds/cluster/*`,
+              },
+            },
+          }),
         ],
       }),
     });
@@ -160,24 +181,24 @@ export class MihcStack extends cdk.Stack {
         encryptionKey: this.databaseKmsKey,
       }),
       writer: rds.ClusterInstance.provisioned("writer", {
-        instanceType: ec2.InstanceType.of(ec2.InstanceClass.T3, ec2.InstanceSize.SMALL),
+        instanceType: ec2.InstanceType.of(ec2.InstanceClass.T4G, ec2.InstanceSize.MEDIUM),
         enablePerformanceInsights: true, // For monitoring and compliance
         performanceInsightEncryptionKey: this.databaseKmsKey,
         performanceInsightRetention: rds.PerformanceInsightRetention.MONTHS_12,
       }),
       readers: [
         rds.ClusterInstance.provisioned("reader1", {
-          instanceType: ec2.InstanceType.of(ec2.InstanceClass.T3, ec2.InstanceSize.SMALL),
+          instanceType: ec2.InstanceType.of(ec2.InstanceClass.T4G, ec2.InstanceSize.MEDIUM),
           enablePerformanceInsights: true,
           performanceInsightEncryptionKey: this.databaseKmsKey,
           performanceInsightRetention: rds.PerformanceInsightRetention.MONTHS_12,
         }),
-        rds.ClusterInstance.provisioned("reader2", {
-          instanceType: ec2.InstanceType.of(ec2.InstanceClass.T3, ec2.InstanceSize.SMALL),
-          enablePerformanceInsights: true,
-          performanceInsightEncryptionKey: this.databaseKmsKey,
-          performanceInsightRetention: rds.PerformanceInsightRetention.MONTHS_12,
-        }),
+        // rds.ClusterInstance.provisioned("reader2", {
+        //   instanceType: ec2.InstanceType.of(ec2.InstanceClass.T4G, ec2.InstanceSize.MEDIUM),
+        //   enablePerformanceInsights: true,
+        //   performanceInsightEncryptionKey: this.databaseKmsKey,
+        //   performanceInsightRetention: rds.PerformanceInsightRetention.MONTHS_12,
+        // }),
       ],
       vpc: this.vpc,
       vpcSubnets: {
@@ -215,7 +236,7 @@ export class MihcStack extends cdk.Stack {
           "log_min_duration_statement": "0",
           "log_connections": "1",
           "log_disconnections": "1",
-          "log_checkpoints": "1",
+          // "log_checkpoints": "1",
           "log_lock_waits": "1",
           // Set timezone
           "timezone": "UTC",
