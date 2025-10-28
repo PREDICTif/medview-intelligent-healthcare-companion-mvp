@@ -39,6 +39,7 @@ def select_tools_for_prompt(prompt: str) -> dict:
             "codeInterpreter": "Execute code, analyze data, perform calculations, or work with programming tasks",
             "webBrowser": "Browse specific websites, read web pages, or access specific URLs",
             "weather": "Get current weather conditions and forecasts for any location worldwide",
+            "diabetes": "Access medical knowledge about diabetes including symptoms, treatments, management, and care",
         }
 
         analysis_prompt = f"""You are a tool selection assistant. Analyze the user's prompt and determine which tools are needed.
@@ -51,6 +52,7 @@ Available tools and when to use them:
 - codeInterpreter: {tool_descriptions["codeInterpreter"]}
 - webBrowser: {tool_descriptions["webBrowser"]}
 - weather: {tool_descriptions["weather"]}
+- diabetes: {tool_descriptions["diabetes"]}
 
 User prompt: "{prompt}"
 
@@ -63,7 +65,8 @@ Analyze the prompt and determine which tools are needed. Respond with ONLY a val
   "awsDocumentation": boolean,
   "codeInterpreter": boolean,
   "webBrowser": boolean,
-  "weather": boolean
+  "weather": boolean,
+  "diabetes": boolean
 }}
 
 Guidelines:
@@ -75,6 +78,7 @@ Guidelines:
 - Only enable codeInterpreter for programming/calculation tasks
 - Only enable webBrowser for browsing specific websites
 - Only enable weather for weather-related questions (current conditions, forecasts, temperature, etc.)
+- Only enable diabetes for questions about diabetes, blood sugar, insulin, diabetic symptoms, or diabetes management
 
 Output only the JSON, no explanation."""
 
@@ -86,7 +90,7 @@ Output only the JSON, no explanation."""
             tool_selection = json.loads(response_text)
 
             # Validate that all expected keys are present
-            expected_keys = ["reasoning", "imageGeneration", "webSearch", "awsDocumentation", "codeInterpreter", "webBrowser", "weather"]
+            expected_keys = ["reasoning", "imageGeneration", "webSearch", "awsDocumentation", "codeInterpreter", "webBrowser", "weather", "diabetes"]
             for key in expected_keys:
                 if key not in tool_selection:
                     tool_selection[key] = False
@@ -98,9 +102,9 @@ Output only the JSON, no explanation."""
         except json.JSONDecodeError:
             logging.error(f"Failed to parse tool selection response: {response_text}")
             # Return conservative defaults
-            return {"reasoning": False, "imageGeneration": False, "webSearch": False, "awsDocumentation": False, "codeInterpreter": False, "webBrowser": False, "weather": False}
+            return {"reasoning": False, "imageGeneration": False, "webSearch": False, "awsDocumentation": False, "codeInterpreter": False, "webBrowser": False, "weather": False, "diabetes": False}
 
     except Exception as e:
         logging.error(f"Tool selection error: {str(e)}", exc_info=True)
         # Return conservative defaults on error
-        return {"reasoning": False, "imageGeneration": False, "webSearch": False, "awsDocumentation": False, "codeInterpreter": False, "webBrowser": False, "weather": False}
+        return {"reasoning": False, "imageGeneration": False, "webSearch": False, "awsDocumentation": False, "codeInterpreter": False, "webBrowser": False, "weather": False, "diabetes": False}

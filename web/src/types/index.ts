@@ -65,4 +65,5 @@ export type ToolSelectionResponse = {
   codeInterpreter: boolean;
   webBrowser: boolean;
   weather: boolean;
+  diabetes: boolean;
 };

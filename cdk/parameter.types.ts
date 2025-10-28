@@ -19,6 +19,7 @@ export const ParameterSchema = z.object({
     .int('Provisioned concurrency must be an integer')
     .min(0, 'Provisioned concurrency must be at least 0')
     .max(1000, 'Provisioned concurrency must not exceed 1000'),
+  diabetesKnowledgeBaseId: z.union([z.null(), z.string()]),
 });
 
 export type Parameter = z.infer<typeof ParameterSchema>;

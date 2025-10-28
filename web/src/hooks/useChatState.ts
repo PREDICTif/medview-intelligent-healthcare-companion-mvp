@@ -160,6 +160,7 @@ const useChatState = (chatId: string) => {
   const hasCodeInterpreter = currentTools.includes('codeInterpreter');
   const hasWebBrowser = currentTools.includes('webBrowser');
   const hasWeather = currentTools.includes('weather');
+  const hasDiabetes = currentTools.includes('diabetes');
 
   const toggleTool = useCallback(
     (toolName: string) => {
@@ -275,6 +276,19 @@ const useChatState = (chatId: string) => {
         setToolsToUseImpl(
           chatId,
           currentTools.filter((tool) => tool !== 'weather')
+        );
+      }
+    },
+    diabetes: hasDiabetes,
+    setDiabetes: (enabled: boolean) => {
+      const currentTools = state.toolsToUse || [];
+      const hasThisTool = currentTools.includes('diabetes');
+      if (enabled && !hasThisTool) {
+        setToolsToUseImpl(chatId, [...currentTools, 'diabetes']);
+      } else if (!enabled && hasThisTool) {
+        setToolsToUseImpl(
+          chatId,
+          currentTools.filter((tool) => tool !== 'diabetes')
         );
       }
     },

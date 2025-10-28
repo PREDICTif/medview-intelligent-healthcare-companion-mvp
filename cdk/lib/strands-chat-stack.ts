@@ -189,6 +189,7 @@ export class StrandsChatStack extends cdk.Stack {
         PARAMETER: JSON.stringify(props.parameter),
         TAVILY_API_KEY: tavilyApiKey ?? '',
         OPENWEATHER_API_KEY: openWeatherApiKey ?? '',
+        DIABETES_KB_ID: props.parameter.diabetesKnowledgeBaseId ?? '',
       },
       insightsVersion: LambdaInsightsVersion.VERSION_1_0_333_0,
     });
@@ -209,6 +210,34 @@ export class StrandsChatStack extends cdk.Stack {
         effect: Effect.ALLOW,
         actions: ['bedrock-agentcore:*'],
         resources: ['*'],
+      })
+    );
+
+    // Add Bedrock Agent Runtime permissions for Knowledge Base access
+    // Add Bedrock Knowledge Base permissions
+    handler.role?.addToPrincipalPolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: [
+          'bedrock:Retrieve',              // ✅ Correct for KB retrieve
+          'bedrock:RetrieveAndGenerate',   // ✅ Correct for KB retrieve+generate
+        ],
+        // Best practice: scope to specific KB instead of '*'
+        resources: [
+          `arn:aws:bedrock:${props.parameter.appRegion}:${cdk.Stack.of(this).account}:knowledge-base/${props.parameter.diabetesKnowledgeBaseId}`
+        ],
+      })
+    );
+
+    // Add Bedrock model invocation permissions for RAGAS evaluation
+    handler.role?.addToPrincipalPolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ['bedrock:InvokeModel'],
+        resources: [
+          `arn:aws:bedrock:${props.parameter.appRegion}::foundation-model/anthropic.claude-*`,
+          `arn:aws:bedrock:${props.parameter.appRegion}::foundation-model/us.anthropic.claude-*`
+        ],
       })
     );
 

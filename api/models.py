@@ -63,6 +63,7 @@ class ToolSelectionResponse(BaseModel):
     codeInterpreter: bool
     webBrowser: bool
     weather: bool
+    diabetes: bool
 
 
 class GalleryItem(BaseModel):

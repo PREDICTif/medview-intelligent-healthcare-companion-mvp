@@ -16,12 +16,24 @@ from config import PARAMETER, WORKSPACE_DIR
 from database import create_messages_in_db, get_messages_from_db
 from models import MessageInTable, MessageWillBeInTable, StreamingRequest
 from services.chat_service import build_message, build_messages
-from tools import create_session_aware_upload_tool, web_search, get_weather, get_weather_forecast
+from tools import (
+    create_session_aware_upload_tool,
+    web_search,
+    get_weather,
+    get_weather_forecast,
+    query_diabetes_knowledge,
+    query_diabetes_with_generation,
+    check_chunks_relevance,
+    medical_web_search,
+    detect_emergency,
+    check_medication_safety,
+)
 from utils import (
     cleanup_session_workspace,
     create_session_workspace,
     generate_session_id,
     generate_session_system_prompt,
+    generate_diabetes_system_prompt,
     handle_error_and_stream,
     stream_chunk,
 )
@@ -30,6 +42,11 @@ from utils import (
 async def process_streaming_request(request: StreamingRequest, x_user_sub: str, chat_exists: bool):
     """Process streaming request and yield chunks"""
 
+    # Extract tools from user message
+    user_tools = request.userMessage.tools or []
+    
+    logging.info(f"Received user_tools: {user_tools}")
+    logging.info(f"'diabetes' in user_tools: {'diabetes' in user_tools}")
     # Generate session ID and create session workspace
     session_id = generate_session_id()
     session_workspace_dir = create_session_workspace(session_id, WORKSPACE_DIR)
@@ -151,6 +168,18 @@ async def process_streaming_request(request: StreamingRequest, x_user_sub: str, 
             if "weather" in user_tools:
                 tools.extend([get_weather, get_weather_forecast])
 
+            if "diabetes" in user_tools:
+                
+                # Add all corrective RAG tools for diabetes
+                tools.extend([
+                    query_diabetes_knowledge,
+                    query_diabetes_with_generation,
+                    check_chunks_relevance,
+                    medical_web_search,
+                    detect_emergency,
+                    check_medication_safety,
+                ])
+
             if "codeInterpreter" in user_tools:
                 agent_core_code_interpreter = AgentCoreCodeInterpreter(region=PARAMETER["agentCoreRegion"])
                 tools.append(agent_core_code_interpreter.code_interpreter)
@@ -159,8 +188,14 @@ async def process_streaming_request(request: StreamingRequest, x_user_sub: str, 
                 agent_core_browser = AgentCoreBrowser(region=PARAMETER["agentCoreRegion"])
                 tools.append(agent_core_browser.browser)
 
+            # Use diabetes-specific system prompt if diabetes tools are enabled
+            if "diabetes" in user_tools:
+                combined_prompt = generate_diabetes_system_prompt() + "\n\n" + session_system_prompt
+            else:
+                combined_prompt = session_system_prompt
+
             agent = Agent(
-                system_prompt=session_system_prompt,
+                system_prompt=combined_prompt,
                 model=model,
                 tools=tools,
                 messages=build_messages(prev_messages),

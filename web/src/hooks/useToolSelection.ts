@@ -16,6 +16,8 @@ const useToolSelection = () => {
     try {
       setIsSelecting(true);
       const result = await selectToolsApi(prompt);
+      console.log('Selected tools:', result);
+      console.log('diabetes in result:', result?.diabetes);
       return result;
     } catch (error) {
       console.error('Failed to select tools:', error);
@@ -28,6 +30,7 @@ const useToolSelection = () => {
         codeInterpreter: false,
         webBrowser: false,
         weather: false,
+        diabetes: false,
       };
     } finally {
       setIsSelecting(false);

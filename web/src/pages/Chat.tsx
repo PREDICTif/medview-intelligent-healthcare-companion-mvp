@@ -79,8 +79,10 @@ function Chat() {
     setCodeInterpreter,
     webBrowser,
     setWebBrowser,
-    weather,              // ADD THIS
+    weather,
     setWeather,
+    diabetes,
+    setDiabetes,
     selectedModel,
     setSelectedModel,
     availableModels,
@@ -106,7 +108,8 @@ function Chat() {
         const stateTools = state.toolsToUse || [];
         const wasAutoMode = (state as ChatState & { isAutoMode?: boolean })
           ?.isAutoMode;
-
+        console.log('wasAutoMode is', wasAutoMode);
+        console.log('isAutoMode on?:', isAutoMode);
         setSelectedModel(state.model!);
 
         if (wasAutoMode) {
@@ -201,21 +204,23 @@ function Chat() {
     let finalToolsToUse: string[] = [];
 
     if (isAutoMode && userInput.trim()) {
+      console.log('isAutoMode is', isAutoMode);
+      // 🟢 Start with user's manually selected tools
+      const toolsSet = new Set([...toolsToUse]);
       try {
         const toolSelection = await selectTools(userInput.trim());
         if (toolSelection) {
           // Apply tool selection directly to tools array
-          if (toolSelection.reasoning) finalToolsToUse.push('reasoning');
-          if (toolSelection.imageGeneration)
-            finalToolsToUse.push('imageGeneration');
-          if (toolSelection.webSearch) finalToolsToUse.push('webSearch');
-          if (toolSelection.awsDocumentation)
-            finalToolsToUse.push('awsDocumentation');
-          if (toolSelection.codeInterpreter)
-            finalToolsToUse.push('codeInterpreter');
-          if (toolSelection.webBrowser) finalToolsToUse.push('webBrowser');
-          if (toolSelection.weather) finalToolsToUse.push('weather');
+          if (toolSelection.reasoning) toolsSet.add('reasoning');
+          if (toolSelection.imageGeneration) toolsSet.add('imageGeneration');
+          if (toolSelection.webSearch) toolsSet.add('webSearch');
+          if (toolSelection.awsDocumentation) toolsSet.add('awsDocumentation');
+          if (toolSelection.codeInterpreter) toolsSet.add('codeInterpreter');
+          if (toolSelection.webBrowser) toolsSet.add('webBrowser');
+          if (toolSelection.weather) toolsSet.add('weather');
+          if (toolSelection.diabetes) toolsSet.add('diabetes');
         }
+        finalToolsToUse = Array.from(toolsSet);
       } catch (error) {
         console.error('Failed to auto-select tools:', error);
         // Fall back to manual selection on error
@@ -250,6 +255,7 @@ function Chat() {
     setMessages([...messages, newUserMessage, newAssistantMessage]);
 
     try {
+      console.log('Sending message with tools:', toolsToUse);
       const stream = postNewMessage(
         chatId!,
         model.id,
@@ -871,6 +877,8 @@ function Chat() {
         onWebBrowserChange={setWebBrowser}
         weather={weather}
         onWeatherChange={setWeather}
+        diabetes={diabetes}
+        onDiabetesChange={setDiabetes}
       />
     </div>
   );

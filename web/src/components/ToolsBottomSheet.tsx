@@ -18,6 +18,8 @@ interface ToolsBottomSheetProps {
   onWebBrowserChange: (value: boolean) => void;
   weather: boolean;
   onWeatherChange: (value: boolean) => void;
+  diabetes: boolean;
+  onDiabetesChange: (value: boolean) => void;
 }
 
 function ToolsBottomSheet({
@@ -38,6 +40,8 @@ function ToolsBottomSheet({
   onWebBrowserChange,
   weather,
   onWeatherChange,
+  diabetes,
+  onDiabetesChange,
 }: ToolsBottomSheetProps) {
   // Close on escape key
   useEffect(() => {
@@ -174,6 +178,27 @@ function ToolsBottomSheet({
             strokeLinejoin="round"
             strokeWidth={2}
             d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"
+          />
+        </svg>
+      ),
+    },
+    {
+      id: 'diabetes',
+      name: 'Diabetes Knowledge',
+      description: 'Access diabetes information',
+      checked: diabetes,
+      onChange: onDiabetesChange,
+      icon: (
+        <svg
+          className="h-5 w-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24">
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
           />
         </svg>
       ),
